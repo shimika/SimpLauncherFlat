@@ -1,0 +1,19 @@
+﻿<Window x:Class="SimpLauncherFlat.SwitchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SwitchWindow"  Height="200" Width="50" Opacity="1" Background="Transparent"
+        WindowStartupLocation="Manual" Topmost="True" AllowsTransparency="True" AllowDrop="True"
+        ResizeMode="NoResize" WindowStyle="None" ShowInTaskbar="False" x:Name="windowSwitch"
+        Loaded="windowSwitch_Loaded" ShowActivated="False">
+
+    <Grid>
+        <StackPanel Width="50" Height="200" HorizontalAlignment="Left" Orientation="Horizontal">
+            <Rectangle x:Name="rectAddItems" Fill="{DynamicResource sColor}" Height="200" Width="0"/>
+            <Canvas x:Name="canvasSwitch">
+                <Polygon Points="0,0 10,10 10,190 0,200" Fill="{DynamicResource sColor}"/>
+                <Polygon Points="2,95 8,100 2,105" Fill="White"/>
+            </Canvas>
+        </StackPanel>
+        <Button x:Name="buttonSwitch" Height="200" Width="2" HorizontalAlignment="Left" Background="Transparent"/>
+    </Grid>
+</Window>
