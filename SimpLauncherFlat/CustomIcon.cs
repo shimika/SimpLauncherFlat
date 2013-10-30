@@ -10,6 +10,7 @@ using System.Windows.Media.Animation;
 
 namespace SimpLauncherFlat {
 	public class CustomIcon {
+		public static MainWindow winMain;
 		public static Grid GetIcon(IconData icon){
 			Grid grid = new Grid() {
 				Width = 110, Height = 110, Background = Brushes.Transparent, Tag = icon.nID,
@@ -34,7 +35,13 @@ namespace SimpLauncherFlat {
 			grid.Children.Add(img);
 			grid.Children.Add(button);
 
+			button.Click += button_Click;
+
 			return grid;
+		}
+
+		static void button_Click(object sender, RoutedEventArgs e) {
+			winMain.StartProcess((int)((Button)sender).Tag);
 		}
 	}
 }

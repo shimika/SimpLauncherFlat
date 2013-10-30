@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Media.Animation;
 
 namespace SimpLauncherFlat {
@@ -27,6 +28,9 @@ namespace SimpLauncherFlat {
 					BeginTime = TimeSpan.FromMilliseconds(100 * dAnimateOn),
 					EasingFunction = new ExponentialEase() { Exponent = 5, EasingMode = EasingMode.EaseOut }
 				});
+
+
+			winMain.Top = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height / 2 - (layoutMaxHeight * 55 + 10);
 		}
 	}
 }

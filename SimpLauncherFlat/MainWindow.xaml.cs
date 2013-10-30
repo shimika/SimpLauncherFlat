@@ -23,13 +23,18 @@ namespace SimpLauncherFlat {
 		public MainWindow(SwitchWindow sWindow) {
 			InitializeComponent();
 			windowSwitch = sWindow;
-			Layout.winMain = FileIO.winMain = this;
+			CustomIcon.winMain = Layout.winMain = FileIO.winMain = this;
 
 			FileIO.ReadFile();
+			this.Left = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Left + 10;
 
-			CaptureMouse();
 			this.PreviewMouseMove += MainWindow_PreviewMouseMove;
 			this.MouseLeave += MainWindow_MouseLeave;
+			this.Deactivated += (o, e) => {
+				if (Pref.Visible) {
+					AnimateWindow(0);
+				}
+			};
 		}
 
 		private void AnimateSelector(Grid gridSelector, double dLeft, double dTop) {
@@ -61,10 +66,49 @@ namespace SimpLauncherFlat {
 			}
 		}
 
-		public void AnimateWindow(int isOpen) {
+		public void AnimateWindow(double isOpen) {
+			Pref.Visible = isOpen > 0 ? true : false;
+			if (isOpen == 0) { windowSwitch.canTouch = false; }
+			this.Activate();
+			this.WindowState = WindowState.Normal;
+
+			Storyboard sb = new Storyboard();
+
+			ThicknessAnimation ta = new ThicknessAnimation(new Thickness(-200 * isOpen + 30, 0, 0, 0), new Thickness(-100 * (1 - isOpen) + 30, 0, 0, 0), TimeSpan.FromMilliseconds(300)) {
+				BeginTime = TimeSpan.FromMilliseconds(50 * isOpen),
+			};
+			if (isOpen > 0) {
+				ta.EasingFunction = new ExponentialEase() { Exponent = 5, EasingMode = EasingMode.EaseOut };
+			} else {
+				ta.Duration = TimeSpan.FromMilliseconds(300);
+				ta.EasingFunction = new ExponentialEase() { Exponent = 6, EasingMode = EasingMode.EaseInOut };
+			}
+
+			Storyboard.SetTarget(ta, gridMain);
+			Storyboard.SetTargetProperty(ta, new PropertyPath(Grid.MarginProperty));
+			sb.Children.Add(ta);
+
+			DoubleAnimation da3 = new DoubleAnimation(isOpen, TimeSpan.FromMilliseconds(200)) {
+				BeginTime = TimeSpan.FromMilliseconds(100),
+			};
+			Storyboard.SetTarget(da3, this);
+			Storyboard.SetTargetProperty(da3, new PropertyPath(Window.OpacityProperty));
+			sb.Children.Add(da3);
+
+			sb.Completed += delegate(object sender, EventArgs e) {
+				windowSwitch.canTouch = true;
+				if (!Pref.Visible) {
+					this.WindowState = WindowState.Minimized;
+				}
+			};
+
+			sb.Begin(this);
 		}
 
 		public void AddItems(List<string> listPath) {
+		}
+
+		public void StartProcess(int nID) {
 		}
 	}
 }
