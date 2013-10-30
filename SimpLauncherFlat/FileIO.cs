@@ -15,7 +15,7 @@ namespace SimpLauncherFlat {
 		static string ffPref = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\SimpLauncherSet+.ini";
 		public static MainWindow winMain;
 
-		public static void ReadFile() {
+		public static List<IconData> ReadFile() {
 			if (!File.Exists(ffPref)) {
 				using (StreamWriter sw = new StreamWriter(ffPref, true)) {
 					sw.WriteLine("startup=false");
@@ -44,6 +44,8 @@ namespace SimpLauncherFlat {
 
 			if (!File.Exists(ffList)) { using (StreamWriter sw = new StreamWriter(ffList, true)) { sw.Write(""); } }
 
+			List<IconData> listIcon = new List<IconData>();
+
 			using (StreamReader sr = new StreamReader(ffList)) {
 				string[] strSplit = sr.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 				Layout.ResizeWindow(strSplit.Length, 0);
@@ -51,14 +53,10 @@ namespace SimpLauncherFlat {
 				foreach (string str in strSplit) {
 					string[] strSplit2 = str.Split(new string[] { "#!SIMPLAUNCHER!#" }, StringSplitOptions.None);
 					IconData icon = MakeIcon(strSplit2[0], strSplit2[1], Convert.ToBoolean(strSplit2[2]));
-
-					Grid grid = CustomIcon.GetIcon(icon);
-					grid.Margin = new Thickness((IconData.dictIcon.Count % Layout.layoutMaxWidth) * 110, (IconData.dictIcon.Count / Layout.layoutMaxWidth) * 110, 0, 0);
-					winMain.gridMain.Children.Add(grid);
-
-					IconData.dictIcon.Add(icon.nID, icon);
+					listIcon.Add(icon);
 				}
 			}
+			return listIcon;
 		}
 
 		public static IconData MakeIcon(string strPath, string strTitle, bool isSpecial) {

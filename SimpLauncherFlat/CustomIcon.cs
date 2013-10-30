@@ -35,13 +35,7 @@ namespace SimpLauncherFlat {
 			grid.Children.Add(img);
 			grid.Children.Add(button);
 
-			button.Click += button_Click;
-
 			return grid;
-		}
-
-		static void button_Click(object sender, RoutedEventArgs e) {
-			winMain.StartProcess((int)((Button)sender).Tag);
 		}
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -25,7 +27,7 @@ namespace SimpLauncherFlat {
 			windowSwitch = sWindow;
 			CustomIcon.winMain = Layout.winMain = FileIO.winMain = this;
 
-			FileIO.ReadFile();
+			AddIcons(FileIO.ReadFile());
 			this.Left = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Left + 10;
 
 			this.PreviewMouseMove += MainWindow_PreviewMouseMove;
@@ -80,7 +82,6 @@ namespace SimpLauncherFlat {
 			if (isOpen > 0) {
 				ta.EasingFunction = new ExponentialEase() { Exponent = 5, EasingMode = EasingMode.EaseOut };
 			} else {
-				ta.Duration = TimeSpan.FromMilliseconds(300);
 				ta.EasingFunction = new ExponentialEase() { Exponent = 6, EasingMode = EasingMode.EaseInOut };
 			}
 
@@ -108,7 +109,40 @@ namespace SimpLauncherFlat {
 		public void AddItems(List<string> listPath) {
 		}
 
-		public void StartProcess(int nID) {
+		public void AddIcons(List<IconData> listIcon) {
+			foreach (IconData icon in listIcon) {
+				Grid grid = CustomIcon.GetIcon(icon);
+				grid.Margin = new Thickness((IconData.dictIcon.Count % Layout.layoutMaxWidth) * 110, (IconData.dictIcon.Count / Layout.layoutMaxWidth) * 110, 0, 0);
+				gridMain.Children.Add(grid);
+
+				((Button)grid.Children[2]).Click += Icon_Click;
+
+				IconData.dictIcon.Add(icon.nID, icon);
+			}
+		}
+
+		private void Icon_Click(object sender, RoutedEventArgs e) {
+			AnimateSelector(gridRow, 0, -110);
+			AnimateSelector(gridColumn, -110, 0);
+			Pref.Visible = false; AnimateWindow(0);
+
+			int nID = (int)((Button)sender).Tag;
+			Process process = new Process();
+			if (IconData.dictIcon[nID].isSpecial) {
+				switch (IconData.dictIcon[nID].strPath) {
+					case "휴지통":
+						process.StartInfo.FileName = Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\explorer.exe";
+						process.StartInfo.Arguments = "e,::{645FF040-5081-101B-9F08-00AA002F954E}";
+						break;
+				}
+			} else {
+				if (File.Exists(IconData.dictIcon[nID].strPath)) {
+					process.StartInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(IconData.dictIcon[nID].strPath);
+				} else if (Directory.Exists(IconData.dictIcon[nID].strPath)) {
+				} else { return; }
+				process.StartInfo.FileName = IconData.dictIcon[nID].strPath;
+			}
+			process.Start();
 		}
 	}
 }
