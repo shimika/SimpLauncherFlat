@@ -10,8 +10,7 @@
             <DropShadowEffect x:Name="grideffectShadow" BlurRadius="10" ShadowDepth="1" Direction="270" Color="{DynamicResource cColor}" Opacity="0.5"/>
         </Grid.Effect>
         <Grid Margin="1" ClipToBounds="True">
-            <Grid Background="White"/>
-            <Grid x:Name="gridMain" Margin="30,0,0,0" ClipToBounds="True">
+            <Grid Background="White" Margin="30,0,0,0">
                 <Grid x:Name="gridRow" Height="110" VerticalAlignment="Top" Margin="0,-110,0,0">
                     <Grid.Background>
                         <SolidColorBrush Color="{DynamicResource cColor}" Opacity="0.2"/>
@@ -24,11 +23,35 @@
                 </Grid>
                 <TextBlock x:Name="textTest" VerticalAlignment="Bottom" Text="Debug"/>
             </Grid>
-            <Grid x:Name="gridPrefCover" Background="#AA000000" Opacity="0"/>
-            <Grid x:Name="gridPref" Width="250" HorizontalAlignment="Left" Background="White" Margin="-220,0,0,0">
-                <Button x:Name="buttonPref" Background="{DynamicResource sColor}" Width="30" HorizontalAlignment="Right">
+            <Grid x:Name="gridMain" Margin="30,0,0,0" ClipToBounds="True">
+            </Grid>
+            
+            <Grid x:Name="gridPrefCover" Background="#AA000000" Opacity="0" IsHitTestVisible="False" PreviewMouseDown="gridPrefCover_MouseDown"/>
+            <Grid x:Name="gridPref" Width="280" HorizontalAlignment="Left" Background="White" Margin="-250,0,0,0">
+                <Button x:Name="buttonPref" Background="{DynamicResource sColor}" Width="30" HorizontalAlignment="Right" Click="buttonPref_Click">
                     <Image Source="/Resources/settings.png"/>
                 </Button>
+
+                <StackPanel VerticalAlignment="Center" Margin="0,0,30,0">
+                    <Button x:Name="buttonStartup" HorizontalAlignment="Center" Background="Transparent" VerticalAlignment="Center" Margin="10">
+                        <Grid Background="Transparent">
+                            <TextBlock x:Name="textStartupOn" Text="Windows 시작 시 자동 실행" FontSize="15" Foreground="{DynamicResource sColor}" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="textStartupOff" Text="Windows 시작 시 실행하지 않음" FontSize="15" Foreground="LightGray" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+                    <Button x:Name="buttonSwitch" HorizontalAlignment="Center" Background="Transparent" VerticalAlignment="Center" Margin="10">
+                        <Grid Background="Transparent">
+                            <TextBlock x:Name="textSwitchOn" Text="스위치 활성화" FontSize="15" Foreground="{DynamicResource sColor}" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="textSwitchOff" Text="스위치 비활성화" FontSize="15" Foreground="LightGray" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+                    <Button x:Name="buttonVolume" HorizontalAlignment="Center" Background="Transparent" VerticalAlignment="Center" Margin="10">
+                        <Grid Background="Transparent">
+                            <TextBlock x:Name="textVolumeOn" Text="볼륨 컨트롤 활성화됨" FontSize="15" Foreground="{DynamicResource sColor}" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="textVolumeOff" Text="볼륨 컨트롤 비활성화됨" FontSize="15" Foreground="LightGray" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+                </StackPanel>
             </Grid>
         </Grid>
     </Grid>

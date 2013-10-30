@@ -11,16 +11,16 @@ using System.Windows.Media.Imaging;
 
 namespace SimpLauncherFlat {
 	public class FileIO {
-		static string ffList = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\SimpLauncher+.ini";
-		static string ffPref = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\SimpLauncherSet+.ini";
+		static string ffList = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\SimpLauncherFlat.ini";
+		static string ffPref = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\SimpLauncherFlatSet.ini";
 		public static MainWindow winMain;
 
 		public static List<IconData> ReadFile() {
 			if (!File.Exists(ffPref)) {
-				using (StreamWriter sw = new StreamWriter(ffPref, true)) {
-					sw.WriteLine("startup=false");
-					sw.WriteLine("switch=true");
-					sw.WriteLine("volume=true");
+				using (StreamWriter sw = new StreamWriter(ffPref, false)) {
+					sw.WriteLine("STARTUP=false");
+					sw.WriteLine("LEFTSWITCH=true");
+					sw.WriteLine("VOLUME=true");
 				}
 			}
 
@@ -29,13 +29,13 @@ namespace SimpLauncherFlat {
 				foreach (string str in strSplit) {
 					string[] strSplit2 = str.Split('=');
 					switch (strSplit2[0]) {
-						case "startup":
+						case "STARTUP":
 							Pref.isStartup = Convert.ToBoolean(strSplit2[1]);
 							break;
-						case "switch":
+						case "LEFTSWITCH":
 							Pref.isSwitchOn = Convert.ToBoolean(strSplit2[1]);
 							break;
-						case "volume":
+						case "VOLUME":
 							Pref.isVolumeOn = Convert.ToBoolean(strSplit2[1]);
 							break;
 					}
@@ -57,6 +57,14 @@ namespace SimpLauncherFlat {
 				}
 			}
 			return listIcon;
+		}
+
+		public static void SavePref() {
+			using (StreamWriter sw = new StreamWriter(ffPref, false)) {
+				sw.WriteLine(string.Format("STARTUP={0}", Pref.isStartup));
+				sw.WriteLine(string.Format("LEFTSWITCH={0}", Pref.isSwitchOn));
+				sw.WriteLine(string.Format("VOLUME={0}", Pref.isVolumeOn));
+			}
 		}
 
 		public static IconData MakeIcon(string strPath, string strTitle, bool isSpecial) {

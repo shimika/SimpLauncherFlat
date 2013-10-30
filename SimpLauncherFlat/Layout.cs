@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Animation;
 
 namespace SimpLauncherFlat {
@@ -31,6 +32,27 @@ namespace SimpLauncherFlat {
 
 
 			winMain.Top = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height / 2 - (layoutMaxHeight * 55 + 10);
+		}
+
+		static void AnimateSelector(Grid gridSelector, double dLeft, double dTop) {
+			gridSelector.BeginAnimation(Grid.MarginProperty, new ThicknessAnimation(new Thickness(dLeft, dTop, 0, 0), TimeSpan.FromMilliseconds(200)) {
+				EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut, Exponent = 4, }
+			});
+		}
+
+		static int nPrePoint = -1;
+		public static void ReplaceSelector(int nPoint) {
+			if (nPrePoint == nPoint) { return; }
+			nPrePoint = nPoint;
+
+			if (nPoint < 0) {
+				AnimateSelector(winMain.gridRow, 0, -110);
+				AnimateSelector(winMain.gridColumn, -110, 0);
+			} else {
+				nPoint = Math.Min(nPoint, IconData.dictIcon.Count - 1);
+				AnimateSelector(winMain.gridRow, 0, (nPoint / Layout.layoutMaxWidth) * 110);
+				AnimateSelector(winMain.gridColumn, (nPoint % Layout.layoutMaxWidth) * 110, 0);
+			}
 		}
 	}
 }

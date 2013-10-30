@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -26,9 +27,19 @@ namespace SimpLauncherFlat {
 			InitializeComponent();
 			windowSwitch = sWindow;
 			CustomIcon.winMain = Layout.winMain = FileIO.winMain = this;
-
-			AddIcons(FileIO.ReadFile());
 			this.Left = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Left + 10;
+
+			List<IconData> listIcon = FileIO.ReadFile();
+			AddIcons(listIcon);
+
+			textStartupOn.Visibility = Pref.isStartup ? Visibility.Visible : Visibility.Collapsed;
+			textStartupOff.Visibility = !Pref.isStartup ? Visibility.Visible : Visibility.Collapsed;
+
+			textSwitchOn.Visibility = Pref.isSwitchOn ? Visibility.Visible : Visibility.Collapsed;
+			textSwitchOff.Visibility = !Pref.isSwitchOn ? Visibility.Visible : Visibility.Collapsed;
+
+			textVolumeOn.Visibility = Pref.isVolumeOn ? Visibility.Visible : Visibility.Collapsed;
+			textVolumeOff.Visibility = !Pref.isVolumeOn ? Visibility.Visible : Visibility.Collapsed;
 
 			this.PreviewMouseMove += MainWindow_PreviewMouseMove;
 			this.MouseLeave += MainWindow_MouseLeave;
@@ -36,35 +47,41 @@ namespace SimpLauncherFlat {
 				if (Pref.Visible) {
 					AnimateWindow(0);
 				}
+			}; 
+			this.Closing += (o, e) => { if (!Pref.CloseFlag) { e.Cancel = true; } };
+
+			buttonStartup.Click += (o, e) => {
+				Pref.isStartup = !Pref.isStartup;
+				textStartupOn.Visibility = Pref.isStartup ? Visibility.Visible : Visibility.Collapsed;
+				textStartupOff.Visibility = !Pref.isStartup ? Visibility.Visible : Visibility.Collapsed;
+				FileIO.SavePref();
+			};
+
+			buttonSwitch.Click += (o, e) => {
+				Pref.isSwitchOn = !Pref.isSwitchOn;
+				textSwitchOn.Visibility = Pref.isSwitchOn ? Visibility.Visible : Visibility.Collapsed;
+				textSwitchOff.Visibility = !Pref.isSwitchOn ? Visibility.Visible : Visibility.Collapsed;
+				FileIO.SavePref();
+			};
+
+			buttonVolume.Click += (o, e) => {
+				Pref.isVolumeOn = !Pref.isVolumeOn;
+				textVolumeOn.Visibility = Pref.isVolumeOn ? Visibility.Visible : Visibility.Collapsed;
+				textVolumeOff.Visibility = !Pref.isVolumeOn ? Visibility.Visible : Visibility.Collapsed;
+				FileIO.SavePref();
 			};
 		}
 
-		private void AnimateSelector(Grid gridSelector, double dLeft, double dTop) {
-			gridSelector.BeginAnimation(Grid.MarginProperty, new ThicknessAnimation(new Thickness(dLeft, dTop, 0, 0), TimeSpan.FromMilliseconds(200)) {
-				EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut, Exponent = 4, }
-			});
-		}
-
-		private void MainWindow_MouseLeave(object sender, MouseEventArgs e) {
-			nSelectorPosition = -1;
-			AnimateSelector(gridRow, 0, -110);
-			AnimateSelector(gridColumn, -110, 0);
-		}
-
-		int nSelectorPosition = -1;
+		private void MainWindow_MouseLeave(object sender, MouseEventArgs e) { Layout.ReplaceSelector(-1); }
 		private void MainWindow_PreviewMouseMove(object sender, MouseEventArgs e) {
 			Point pMouseMove = e.GetPosition(gridMain);
 			if (pMouseMove.X < 0 || pMouseMove.X > Layout.layoutMaxWidth * 110 || pMouseMove.Y < 0 || pMouseMove.Y > Layout.layoutMaxHeight * 110) {
 				MainWindow_MouseLeave(null, null);
 				return;
 			}
-			int nPoint = (int)(pMouseMove.X / 110) + (int)(pMouseMove.Y / 110) * Layout.layoutMaxWidth;
-			nPoint = Math.Max(nPoint, 0);
-			nPoint = Math.Min(nPoint, IconData.dictIcon.Count - 1);
-			if (nPoint != nSelectorPosition) {
-				nSelectorPosition = nPoint;
-				AnimateSelector(gridRow, 0, (nPoint / Layout.layoutMaxWidth) * 110);
-				AnimateSelector(gridColumn, (nPoint % Layout.layoutMaxWidth) * 110, 0);
+			if (Pref.Visible) {
+				int nPoint = (int)(pMouseMove.X / 110) + (int)(pMouseMove.Y / 110) * Layout.layoutMaxWidth;
+				Layout.ReplaceSelector(nPoint);
 			}
 		}
 
@@ -73,6 +90,9 @@ namespace SimpLauncherFlat {
 			if (isOpen == 0) { windowSwitch.canTouch = false; }
 			this.Activate();
 			this.WindowState = WindowState.Normal;
+
+			if (Pref.PrefVisible) { buttonPref.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent)); }
+
 
 			Storyboard sb = new Storyboard();
 
@@ -122,8 +142,7 @@ namespace SimpLauncherFlat {
 		}
 
 		private void Icon_Click(object sender, RoutedEventArgs e) {
-			AnimateSelector(gridRow, 0, -110);
-			AnimateSelector(gridColumn, -110, 0);
+			Layout.ReplaceSelector(-1);
 			Pref.Visible = false; AnimateWindow(0);
 
 			int nID = (int)((Button)sender).Tag;
@@ -143,6 +162,24 @@ namespace SimpLauncherFlat {
 				process.StartInfo.FileName = IconData.dictIcon[nID].strPath;
 			}
 			process.Start();
+		}
+
+		private void gridPrefCover_MouseDown(object sender, MouseButtonEventArgs e) { buttonPref.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent)); }
+		private void buttonPref_Click(object sender, RoutedEventArgs e) {
+			Pref.PrefVisible = !Pref.PrefVisible;
+			gridPrefCover.IsHitTestVisible = Pref.PrefVisible;
+			double dMargin = Pref.PrefVisible ? 0 : -250;
+
+			gridRow.Visibility = Pref.PrefVisible ? Visibility.Collapsed : Visibility.Visible;
+			gridColumn.Visibility = Pref.PrefVisible ? Visibility.Collapsed : Visibility.Visible;
+
+			gridPref.BeginAnimation(Grid.MarginProperty, new ThicknessAnimation(
+				new Thickness(dMargin, 0, 0, 0),
+				TimeSpan.FromMilliseconds(400)) {
+					EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut, Exponent = 5 },
+					BeginTime = TimeSpan.FromMilliseconds(100 * (Pref.PrefVisible ? 1 : 0)),
+				});
+			gridPrefCover.BeginAnimation(Grid.OpacityProperty, new DoubleAnimation(Pref.PrefVisible ? 1 : 0, TimeSpan.FromMilliseconds(200)));
 		}
 	}
 }

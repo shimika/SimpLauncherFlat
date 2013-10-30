@@ -35,6 +35,6 @@ namespace SimpLauncherFlat {
 		public static int nCount;
 		public static bool isStartup, isSwitchOn, isVolumeOn;
 
-		public static bool Visible = false, CloseFlag;
+		public static bool Visible = false, CloseFlag, PrefVisible;
 	}
 }

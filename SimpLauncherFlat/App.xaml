@@ -37,7 +37,7 @@
                                     </VisualState>
                                     <VisualState x:Name="Pressed">
                                         <Storyboard>
-                                            <DoubleAnimation To="0.4" Storyboard.TargetName="gridButton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.00"/>
+                                            <DoubleAnimation To="0.7" Storyboard.TargetName="gridButton" Storyboard.TargetProperty="Opacity" Duration="0:0:0.00"/>
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="Disabled">
