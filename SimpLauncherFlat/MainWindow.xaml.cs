@@ -15,6 +15,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CoreAudioApi;
 
 namespace SimpLauncherFlat {
 	/// <summary>
@@ -180,6 +181,31 @@ namespace SimpLauncherFlat {
 					BeginTime = TimeSpan.FromMilliseconds(100 * (Pref.PrefVisible ? 1 : 0)),
 				});
 			gridPrefCover.BeginAnimation(Grid.OpacityProperty, new DoubleAnimation(Pref.PrefVisible ? 1 : 0, TimeSpan.FromMilliseconds(200)));
+		}
+
+		MMDevice device;
+		MMDeviceEnumerator DevEnum;
+		VolumeWindow windowVolume;
+		bool isMuted; double nowVolume;
+		private void Window_Loaded(object sender, RoutedEventArgs e) {
+			windowVolume = new VolumeWindow();
+			windowVolume.Show();
+			new AltTab().HideAltTab(this);
+			
+			DevEnum = new MMDeviceEnumerator();
+			device = DevEnum.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia);
+			device.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
+		}
+
+		private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data) {
+			if (!Pref.isVolumeOn) { return; }
+			if (isMuted == data.Muted && nowVolume == (int)(data.MasterVolume * 100)) { return; }
+			nowVolume = data.MasterVolume * 100;
+			isMuted = data.Muted;
+
+			Dispatcher.Invoke(new Action(() => {
+				windowVolume.RefreshVolume(nowVolume, data.Muted);
+			}));
 		}
 	}
 }

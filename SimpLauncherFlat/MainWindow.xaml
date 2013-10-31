@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="240" Width="380" Opacity="0" ShowInTaskbar="False" Topmost="True" AllowsTransparency="True"
         ResizeMode="NoResize" WindowStyle="None" WindowStartupLocation="Manual"
-        Background="Transparent"
+        Background="Transparent" Loaded="Window_Loaded"
         >
     <Grid Margin="9" x:Name="gridRoot" Background="{DynamicResource sColor}">
         <Grid.Effect>
