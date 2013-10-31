@@ -48,8 +48,14 @@ namespace SimpLauncherFlat {
 				if (Pref.Visible) {
 					AnimateWindow(0);
 				}
-			}; 
-			this.Closing += (o, e) => { if (!Pref.CloseFlag) { e.Cancel = true; } };
+			};
+			this.Closing += (o, e) => {
+				if (!Pref.CloseFlag) {
+					e.Cancel = true;
+				} else {
+					windowVolume.Close();
+				}
+			};
 
 			buttonStartup.Click += (o, e) => {
 				Pref.isStartup = !Pref.isStartup;
@@ -70,6 +76,40 @@ namespace SimpLauncherFlat {
 				textVolumeOn.Visibility = Pref.isVolumeOn ? Visibility.Visible : Visibility.Collapsed;
 				textVolumeOff.Visibility = !Pref.isVolumeOn ? Visibility.Visible : Visibility.Collapsed;
 				FileIO.SavePref();
+			};
+
+			this.KeyDown += (o, e) => {
+				if (!Pref.Visible || Pref.PrefVisible || Pref.ModifyVisible) { return; }
+
+				switch (e.Key) {
+					case Key.Up:
+						if (Layout.nPrePoint >= Layout.layoutMaxWidth) {
+							Layout.ReplaceSelector(Layout.nPrePoint - Layout.layoutMaxWidth);
+						}
+						break;
+					case Key.Down:
+						if (Layout.nPrePoint >= 0) {
+							Layout.ReplaceSelector(Layout.nPrePoint + Layout.layoutMaxWidth);
+						} else {
+							Layout.ReplaceSelector(0);
+						}
+						break;
+					case Key.Left:
+						Layout.ReplaceSelector(Layout.nPrePoint - 1);
+						break;
+					case Key.Right:
+						Layout.ReplaceSelector(Layout.nPrePoint + 1);
+						break;
+					case Key.Home:
+						Layout.ReplaceSelector(0);
+						break;
+					case Key.End:
+						Layout.ReplaceSelector(IconData.dictIcon.Count - 1);
+						break;
+					case Key.Enter:
+						LaunchIcon(Layout.nPrePoint);
+						break;
+				}
 			};
 		}
 
@@ -93,6 +133,7 @@ namespace SimpLauncherFlat {
 			this.WindowState = WindowState.Normal;
 
 			if (Pref.PrefVisible) { buttonPref.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent)); }
+			if (!Pref.Visible) { Layout.ReplaceSelector(-1); }
 
 
 			Storyboard sb = new Storyboard();
@@ -138,15 +179,23 @@ namespace SimpLauncherFlat {
 
 				((Button)grid.Children[2]).Click += Icon_Click;
 
+				icon.nPosition = IconData.dictIcon.Count;
 				IconData.dictIcon.Add(icon.nID, icon);
 			}
+			Layout.RefreshPositionList();
 		}
 
 		private void Icon_Click(object sender, RoutedEventArgs e) {
+			int nID = (int)((Button)sender).Tag;
+			LaunchIcon(nID);
+		}
+
+		private void LaunchIcon(int nID) {
+			if (nID < 0) { return; }
+
 			Layout.ReplaceSelector(-1);
 			Pref.Visible = false; AnimateWindow(0);
 
-			int nID = (int)((Button)sender).Tag;
 			Process process = new Process();
 			if (IconData.dictIcon[nID].isSpecial) {
 				switch (IconData.dictIcon[nID].strPath) {

@@ -29,12 +29,13 @@ namespace SimpLauncherFlat {
 		}
 
 		public static Dictionary<int, IconData> dictIcon = new Dictionary<int, IconData>();
+		public static Dictionary<int, int> listIcon = new Dictionary<int, int>();
 	}
 
 	public class Pref {
 		public static int nCount;
 		public static bool isStartup, isSwitchOn, isVolumeOn;
 
-		public static bool Visible = false, CloseFlag, PrefVisible;
+		public static bool Visible = false, CloseFlag, PrefVisible, ModifyVisible;
 	}
 }
