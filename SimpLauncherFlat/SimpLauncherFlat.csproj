@@ -40,6 +40,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,10 +55,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </ApplicationDefinition>
+    </Page>
     <Compile Include="CoreAudioApi\AudioEndpointVolume.cs" />
     <Compile Include="CoreAudioApi\AudioEndpointVolumeCallback.cs" />
     <Compile Include="CoreAudioApi\AudioEndpointVolumeChannel.cs" />
@@ -110,6 +111,8 @@
     <Compile Include="FileIO.cs" />
     <Compile Include="IconData.cs" />
     <Compile Include="Layout.cs" />
+    <Compile Include="Rearrange.cs" />
+    <Compile Include="SingleInstance.cs" />
     <Compile Include="SwitchWindow.xaml.cs">
       <DependentUpon>SwitchWindow.xaml</DependentUpon>
     </Compile>
@@ -185,6 +188,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\volumeX.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\cancel.png" />
+    <Resource Include="Resources\check.png" />
+    <Resource Include="Resources\delete.png" />
+    <Resource Include="Resources\next.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\favs.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

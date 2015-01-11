@@ -13,14 +13,23 @@ namespace SimpLauncherFlat {
 	public class FileIO {
 		static string ffList = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\SimpLauncherFlat.ini";
 		static string ffPref = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\SimpLauncherFlatSet.ini";
+
+		static string ffListPlus = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\SimpLauncher+.ini";
+		static string ffPrefPlus = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\SimpLauncherSet+.ini";
 		public static MainWindow winMain;
 
 		public static List<IconData> ReadFile() {
 			if (!File.Exists(ffPref)) {
-				using (StreamWriter sw = new StreamWriter(ffPref, false)) {
-					sw.WriteLine("STARTUP=false");
-					sw.WriteLine("LEFTSWITCH=true");
-					sw.WriteLine("VOLUME=true");
+				if (File.Exists(ffPrefPlus)) {
+					string strPrefData = "";
+					using (StreamReader sr = new StreamReader(ffPrefPlus)) { strPrefData = sr.ReadToEnd(); }
+					using (StreamWriter sw = new StreamWriter(ffPref, false)) { sw.Write(strPrefData); }
+				} else {
+					using (StreamWriter sw = new StreamWriter(ffPref, false)) {
+						sw.WriteLine("STARTUP=false");
+						sw.WriteLine("LEFTSWITCH=true");
+						sw.WriteLine("VOLUME=true");
+					}
 				}
 			}
 
@@ -42,13 +51,20 @@ namespace SimpLauncherFlat {
 				}
 			}
 
-			if (!File.Exists(ffList)) { using (StreamWriter sw = new StreamWriter(ffList, true)) { sw.Write(""); } }
+			if (!File.Exists(ffList)) {
+				if (File.Exists(ffListPlus)) {
+					string strListData = "";
+					using (StreamReader sr = new StreamReader(ffListPlus)) { strListData = sr.ReadToEnd(); }
+					using (StreamWriter sw = new StreamWriter(ffList, false)) { sw.Write(strListData); }
+				} else {
+					using (StreamWriter sw = new StreamWriter(ffList, true)) { sw.Write(""); }
+				}
+			}
 
 			List<IconData> listIcon = new List<IconData>();
 
 			using (StreamReader sr = new StreamReader(ffList)) {
 				string[] strSplit = sr.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-				Layout.ResizeWindow(strSplit.Length, 0);
 
 				foreach (string str in strSplit) {
 					string[] strSplit2 = str.Split(new string[] { "#!SIMPLAUNCHER!#" }, StringSplitOptions.None);
@@ -64,6 +80,14 @@ namespace SimpLauncherFlat {
 				sw.WriteLine(string.Format("STARTUP={0}", Pref.isStartup));
 				sw.WriteLine(string.Format("LEFTSWITCH={0}", Pref.isSwitchOn));
 				sw.WriteLine(string.Format("VOLUME={0}", Pref.isVolumeOn));
+			}
+		}
+
+		public static void SaveList() {
+			using (StreamWriter sw = new StreamWriter(ffList, false)) {
+				foreach (KeyValuePair<int, int> kv1 in IconData.listIcon) {
+					sw.WriteLine(string.Format("{0}#!SIMPLAUNCHER!#{1}#!SIMPLAUNCHER!#{2}", IconData.dictIcon[kv1.Value].strPath, IconData.dictIcon[kv1.Value].strTitle, IconData.dictIcon[kv1.Value].isSpecial));
+				}
 			}
 		}
 

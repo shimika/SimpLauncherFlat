@@ -26,6 +26,8 @@ namespace SimpLauncherFlat {
 		public MainWindow mainWindow;
 		public bool canTouch = true;
 
+		string strVersion = "v.1.0.2";
+
 		public SwitchWindow() {
 			InitializeComponent();
 
@@ -38,7 +40,7 @@ namespace SimpLauncherFlat {
 			buttonSwitch.Click += delegate(object sender, RoutedEventArgs e) {
 				if (!canTouch) { return; }
 				if (!Pref.Visible) {
-					mainWindow.AnimateWindow(1);
+					mainWindow.AnimateWindow(1, true);
 				}
 			};
 
@@ -48,10 +50,13 @@ namespace SimpLauncherFlat {
 			var iconHandle = SimpLauncherFlat.Properties.Resources.Delicious.Handle;
 			ni.Icon = System.Drawing.Icon.FromHandle(iconHandle);
 			ni.Visible = true; ni.Text = "SimplauncherFlat";
+			ni.DoubleClick += (o, e) => mainWindow.AnimateWindow(1, true);
 			System.Windows.Forms.ContextMenuStrip ctxt = new System.Windows.Forms.ContextMenuStrip();
+			System.Windows.Forms.ToolStripMenuItem cvertion = new System.Windows.Forms.ToolStripMenuItem(strVersion);
 			System.Windows.Forms.ToolStripMenuItem cshutdown = new System.Windows.Forms.ToolStripMenuItem("닫기");
 			//cstartup.Checked = isStartWindows;
 			cshutdown.Click += delegate(object sender2, EventArgs e2) { this.Close(); };
+			ctxt.Items.Add(cvertion);
 			ctxt.Items.Add(cshutdown);
 			ni.ContextMenuStrip = ctxt;
 
@@ -101,14 +106,21 @@ namespace SimpLauncherFlat {
 			Win32.RegisterHotKey(wih.Handle, LaunchKey, 8, Win32.VK_KEY_Q);
 			Win32.RegisterHotKey(wih.Handle, LaunchKeyA, 8, Win32.VK_KEY_A);
 			new AltTab().HideAltTab(this);
+			 
+			AnimateSwitch(0, 0);
+		}
+
+		public bool ProcessCommandLineArgs(IList<string> args) {
+			mainWindow.AnimateWindow(1, true);
+			return true;
 		}
 
 		private IntPtr MainWindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
 			if (msg == Win32.WM_HOTKEY) {
 				if (wParam.ToString() == LaunchKey.ToString() || wParam.ToString() == LaunchKeyA.ToString()) {
 					if (Pref.Visible) {
-						mainWindow.AnimateWindow(0);
-					} else { mainWindow.AnimateWindow(1); }
+						mainWindow.AnimateWindow(0, false);
+					} else { mainWindow.AnimateWindow(1, false); }
 				}
 				handled = true;
 			}

@@ -34,9 +34,12 @@ namespace SimpLauncherFlat {
 		}
 
 		static void AnimateSelector(Grid gridSelector, double dLeft, double dTop) {
-			gridSelector.BeginAnimation(Grid.MarginProperty, new ThicknessAnimation(new Thickness(dLeft, dTop, 0, 0), TimeSpan.FromMilliseconds(100)) {
+			/*
+			gridSelector.BeginAnimation(Grid.MarginProperty, new ThicknessAnimation(new Thickness(dLeft, dTop, 0, 0), TimeSpan.FromMilliseconds(0)) {
 				EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut, Exponent = 3, }
 			});
+			 */
+			gridSelector.Margin = new Thickness(dLeft, dTop, 0, 0);
 		}
 
 		public static int nPrePoint = -1;
@@ -46,17 +49,16 @@ namespace SimpLauncherFlat {
 			nPrePoint = nPoint;
 
 			if (nPoint < 0) {
-				AnimateSelector(winMain.gridRow, 0, -110);
-				AnimateSelector(winMain.gridColumn, -110, 0);
+				AnimateSelector(winMain.gridSelector, -110, -110);
 			} else {
 				nPrePoint = Math.Min(nPoint, IconData.dictIcon.Count - 1);
-				AnimateSelector(winMain.gridRow, 0, (nPrePoint / Layout.layoutMaxWidth) * 110);
-				AnimateSelector(winMain.gridColumn, (nPrePoint % Layout.layoutMaxWidth) * 110, 0);
+				AnimateSelector(winMain.gridSelector, (nPrePoint % Layout.layoutMaxWidth) * 110, (nPrePoint / Layout.layoutMaxWidth) * 110);
 			}
 		}
 
-		public static void RefreshPositionList() {
+		public static void RefreshPositionList(double dDuration) {
 			int[] nArray = new int[IconData.dictIcon.Count];
+			IconData.listIcon.Clear();
 			int nCount = 0;
 
 			foreach (KeyValuePair<int, IconData> kv in IconData.dictIcon) {
@@ -64,9 +66,20 @@ namespace SimpLauncherFlat {
 			}
 			Array.Sort(nArray);
 			for (int i = 0; i < IconData.dictIcon.Count; i++) {
-				IconData.listIcon.Add(nArray[i] / 10000, nArray[i] % 1000);
-				IconData.dictIcon[nArray[i] % 1000].nPosition = i;
+				IconData.listIcon.Add(i, nArray[i] % 10000);
+				IconData.dictIcon[nArray[i] % 10000].nPosition = i;
 			}
+
+			foreach (KeyValuePair<int, IconData> kvp in IconData.dictIcon) {
+				int nRow = kvp.Value.nPosition / layoutMaxWidth;
+				int nCol = kvp.Value.nPosition % layoutMaxWidth;
+
+				kvp.Value.gridBase.BeginAnimation(Grid.MarginProperty, new ThicknessAnimation(new Thickness(nCol * 110, nRow * 110, 0, 0), TimeSpan.FromMilliseconds(200 * dDuration)) {
+					EasingFunction = new ExponentialEase() { Exponent = 5, EasingMode = EasingMode.EaseOut }
+				});
+			}
+
+			FileIO.SaveList();
 		}
 	}
 }

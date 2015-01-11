@@ -22,11 +22,6 @@ namespace SimpLauncherFlat {
 
 			this.Left = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Left + 90;
 			this.Top = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Top + 100;
-		}
-
-		private void Window_Loaded(object sender, RoutedEventArgs e) {
-			AltTab alttab = new AltTab();
-			alttab.HideAltTab(this);
 
 			this.Closing += delegate(object senderx, System.ComponentModel.CancelEventArgs ex) {
 				if (!Pref.CloseFlag) {
@@ -35,6 +30,11 @@ namespace SimpLauncherFlat {
 					this.Topmost = true;
 				}
 			};
+		}
+
+		private void Window_Loaded(object sender, RoutedEventArgs e) {
+			AltTab alttab = new AltTab();
+			alttab.HideAltTab(this);
 		}
 
 		public void RefreshVolume(double volume, bool isMuted) {
@@ -65,6 +65,10 @@ namespace SimpLauncherFlat {
 			sb.Children.Add(winAnipre);
 			sb.Children.Add(winAni);
 			sb.Begin(this);
+		}
+
+		private void Window_Loaded_1(object sender, RoutedEventArgs e) {
+
 		}
 	}
 }

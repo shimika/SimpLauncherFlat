@@ -8,6 +8,9 @@
             x:Key="sColor"
             Color="{StaticResource cColor}"
         />
+        <Style TargetType="FrameworkElement">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        </Style>
         <Style TargetType="{x:Type Button}">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
@@ -54,6 +57,86 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsEnabled" Value="false">
                                 <Setter Property="Foreground" Value="#ADADAD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Cursor" Value="IBeam"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="FocusStates">
+                                    <VisualState x:Name="Unfocused" />
+                                    <VisualState x:Name="Focused">
+                                        <Storyboard>
+                                            <ColorAnimation To="White" Storyboard.TargetName="BgBrush" Storyboard.TargetProperty="Color" Duration="0:0:0.09" />
+                                            <ColorAnimation To="{DynamicResource cColor}" Storyboard.TargetName="BordBrush" Storyboard.TargetProperty="Color" Duration="0:0:0.09" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ColorAnimation To="#EAEAEA" Storyboard.TargetName="BgBrush" Storyboard.TargetProperty="Color" Duration="0:0:0" />
+                                            <DoubleAnimation To="0.6" Storyboard.TargetName="PART_ContentHost" Storyboard.TargetProperty="(UIElement.Opacity)" Duration="0:0:0" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimation To="White" Storyboard.TargetName="BgBrush" Storyboard.TargetProperty="Color" Duration="0:0:0.09" />
+                                            <ColorAnimation To="{DynamicResource cColor}" Storyboard.TargetName="BordBrush" Storyboard.TargetProperty="Color" Duration="0:0:0.09" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border BorderThickness="1">
+                                <Border.Background>
+                                    <SolidColorBrush Color="#F9F9F9" x:Name="BgBrush" />
+                                </Border.Background>
+                                <Border.BorderBrush>
+                                    <SolidColorBrush Color="LightGray" x:Name="BordBrush" />
+                                </Border.BorderBrush>
+                                <ScrollViewer Margin="3" x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
+                            <Label Foreground="LightGray" Grid.Column="1" Margin="1,-1,0,-1" x:Name="TextPrompt" Content="{TemplateBinding Tag}" Visibility="Collapsed" Focusable="False"></Label>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Text" Value=""></Condition>
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter Property="Visibility" TargetName="TextPrompt" Value="Visible"></Setter>
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="{x:Type ToolTip}" TargetType="ToolTip">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="HasDropShadow" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip">
+                        <Border Name="Border" Background="White" BorderBrush="Black" BorderThickness="2" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                            <ContentPresenter Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top" TextBlock.FontSize="13.33"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasDropShadow" Value="true">
+                                <Setter TargetName="Border" Property="CornerRadius" Value="0"/>
+                                <Setter TargetName="Border" Property="SnapsToDevicePixels" Value="true"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

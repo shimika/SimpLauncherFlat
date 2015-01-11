@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
@@ -20,7 +21,7 @@ namespace SimpLauncherFlat {
 			TextBlock txt = new TextBlock() {
 				HorizontalAlignment = HorizontalAlignment.Center, FontSize = 13.33,
 				VerticalAlignment = VerticalAlignment.Top, TextTrimming = TextTrimming.CharacterEllipsis,
-				Margin = new Thickness(0, 80, 0, 0)
+				Margin = new Thickness(0, 85, 0, 0)
 			};
 			Binding binding = new Binding("strTitle");
 			binding.Source = icon;
@@ -31,11 +32,21 @@ namespace SimpLauncherFlat {
 				Margin = new Thickness(10),
 			};
 
+			icon.gridBase = grid;
+			button.PreviewMouseDown += grid_MouseDown;
+
 			grid.Children.Add(txt);
 			grid.Children.Add(img);
 			grid.Children.Add(button);
 
 			return grid;
+		}
+
+		static void grid_MouseDown(object sender, MouseButtonEventArgs e) {
+			if (e.LeftButton == MouseButtonState.Pressed) {
+				//winMain.CaptureMouse();
+				Rearrange.MouseDown((int)((Button)sender).Tag, e.GetPosition(winMain.gridMain));
+			}
 		}
 	}
 }

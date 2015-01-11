@@ -5,28 +5,25 @@
         ResizeMode="NoResize" WindowStyle="None" WindowStartupLocation="Manual"
         Background="Transparent" Loaded="Window_Loaded"
         >
+
     <Grid Margin="9" x:Name="gridRoot" Background="{DynamicResource sColor}">
         <Grid.Effect>
             <DropShadowEffect x:Name="grideffectShadow" BlurRadius="10" ShadowDepth="1" Direction="270" Color="{DynamicResource cColor}" Opacity="0.5"/>
         </Grid.Effect>
+        <Grid x:Name="gridRemoveFrame" Background="Crimson" Opacity="0"/>
         <Grid Margin="1" ClipToBounds="True">
             <Grid Background="White" Margin="30,0,0,0">
-                <Grid x:Name="gridRow" Height="110" VerticalAlignment="Top" Margin="0,-110,0,0">
+                <Grid x:Name="gridSelector" Height="110" VerticalAlignment="Top" Margin="0,-110,0,0" Width="110" HorizontalAlignment="Left">
                     <Grid.Background>
                         <SolidColorBrush Color="{DynamicResource cColor}" Opacity="0.2"/>
                     </Grid.Background>
                 </Grid>
-                <Grid x:Name="gridColumn" Width="110" HorizontalAlignment="Left" Margin="-110,0,0,0">
-                    <Grid.Background>
-                        <SolidColorBrush Color="{DynamicResource cColor}" Opacity="0.2"/>
-                    </Grid.Background>
-                </Grid>
-                <TextBlock x:Name="textTest" VerticalAlignment="Bottom" Text="Debug"/>
+                <TextBlock x:Name="textTest" VerticalAlignment="Bottom" Text="Debug" Visibility="Collapsed"/>
             </Grid>
             <Grid x:Name="gridMain" Margin="30,0,0,0" ClipToBounds="True">
             </Grid>
             
-            <Grid x:Name="gridPrefCover" Background="#AA000000" Opacity="0" IsHitTestVisible="False" PreviewMouseDown="gridPrefCover_MouseDown"/>
+            <Grid x:Name="gridPrefCover" Background="#CC000000" Opacity="0" IsHitTestVisible="False" PreviewMouseDown="gridPrefCover_MouseDown"/>
             <Grid x:Name="gridPref" Width="280" HorizontalAlignment="Left" Background="White" Margin="-250,0,0,0">
                 <Button x:Name="buttonPref" Background="{DynamicResource sColor}" Width="30" HorizontalAlignment="Right" Click="buttonPref_Click">
                     <Image Source="/Resources/settings.png"/>
@@ -53,6 +50,64 @@
                     </Button>
                 </StackPanel>
             </Grid>
+
+            <Grid x:Name="gridMove" Margin="0,0,0,0" ClipToBounds="True" Visibility="Visible" IsHitTestVisible="False">
+                <Grid x:Name="gridDeleteArea" Width="30" HorizontalAlignment="Left" Background="Crimson" Opacity="0">
+                    <Image Source="/Resources/delete.png" Width="40" Height="40" Margin="-5"/>
+                </Grid>
+                <Grid x:Name="gridMovePanel" Background="Transparent" Width="70" Height="70" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="Collapsed">
+                    <Grid.OpacityMask>
+                        <ImageBrush ImageSource="/Resources/trash.png"/>
+                    </Grid.OpacityMask>
+                    <Image x:Name="imageMove" Width="70" Height="70" VerticalAlignment="Top" HorizontalAlignment="Left" Opacity="0.7" Source="/Resources/trash.png"/>
+                </Grid>
+            </Grid>
+
+            <Grid x:Name="gridModCover" Background="#CC000000" Opacity="0" IsHitTestVisible="False" PreviewMouseDown="gridModCover_MouseDown"/>
+            <StackPanel x:Name="stackMod" Margin="1" Background="White" Width="300" Height="170" HorizontalAlignment="Center" IsHitTestVisible="False" Opacity="0">
+                <Grid Height="40">
+                    <Grid Margin="0,0,80,0">
+                        <Grid.Background>
+                            <SolidColorBrush Color="{DynamicResource cColor}" Opacity="0.6"/>
+                        </Grid.Background>
+                    </Grid>
+                    <TextBlock x:Name="textModTitle" Text="Modify Item" TextOptions.TextHintingMode="Animated" FontSize="15" FontFamily="Century Gothic" HorizontalAlignment="Left" Margin="10,5,40,5" VerticalAlignment="Center" Foreground="White"/>
+                    <Button x:Name="buttonGoto" Width="40" HorizontalAlignment="Right" Margin="0,0,40,0" Click="buttonGoto_Click" ToolTip="해당 파일 및 폴더로 이동합니다.">
+                        <Button.Background>
+                            <SolidColorBrush Color="{DynamicResource cColor}" Opacity="0.8"/>
+                        </Button.Background>
+                        <Image Source="/Resources/next.png" Width="30" Height="30"/>
+                    </Button>
+                    <Button x:Name="buttonRemove" Width="40" HorizontalAlignment="Right" Background="{DynamicResource sColor}" Click="buttonRemove_Click" ToolTip="런쳐에서 삭제합니다.">
+                        <Image Source="/Resources/delete.png" Width="40" Height="40"/>
+                    </Button>
+                </Grid>
+                
+                <Grid Height="73" Margin="5">
+                    <Image x:Name="imgMod" Width="50" Height="50" Margin="5" HorizontalAlignment="Left"/>
+                    <TextBlock Text="바꿀 이름을 입력하세요." TextOptions.TextHintingMode="Animated" Margin="70,8,35,5" FontSize="16" FontFamily="Century Gothic"/>
+                    <TextBox x:Name="textboxMod" Margin="70,38,35,5" Height="30" FontSize="15" KeyDown="textboxMod_KeyDown"/>
+                    <Grid x:Name="rectModClear" Width="30" Height="30" Margin="5,38,5,5" HorizontalAlignment="Right" Background="{DynamicResource sColor}">
+                        <Image Source="/Resources/favs.png" Width="30" Height="30"/>
+                    </Grid>
+                </Grid>
+
+                <Grid Height="40" Margin="70,2,5,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="buttonModOK" Background="{DynamicResource sColor}" Margin="5" Click="buttonModOK_Click">
+                        <Image Source="/Resources/check.png" Width="30" Height="30"/>
+                    </Button>
+                    <Button x:Name="buttonModCancel" Grid.Column="1" Margin="5" Click="buttonModCancel_Click">
+                        <Button.Background>
+                            <SolidColorBrush Color="{DynamicResource cColor}" Opacity="0.4"/>
+                        </Button.Background>
+                        <Image Source="/Resources/cancel.png" Width="30" Height="30"/>
+                    </Button>
+                </Grid>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>
